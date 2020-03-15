@@ -27,4 +27,6 @@ Endpoints:
 | /random_word      | GET           | Returns a random word. | 
 
 
-See flask_postboard for a basic Flask implementation.
+See flask_postboard for a basic Flask implementation. For simplicity, it is just using basic token authentication with a hard-coded list.
+
+
