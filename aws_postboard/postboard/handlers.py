@@ -1,9 +1,18 @@
-from boto3 import client as boto3_client
+import boto3
+from datetime import datetime
 import json
 import logging
+import os
 import random
 
-lambda_client = boto3_client('lambda')
+
+logging.getLogger().setLevel(
+    os.environ.get('LOG_LEVEL', 'INFO').upper()
+)
+
+lambda_client = boto3.client('lambda')
+
+postboard = boto3.resource('dynamodb').Table('Postboard')
 
 
 def random_word(event, context):

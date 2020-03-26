@@ -83,29 +83,39 @@ resource "aws_iam_role_policy" "lambda" {
   name        = "lambda"
   role        = aws_iam_role.lambda.id
 
-  # 1) Allow calling other lambdas
-  # 2) Turn on logging
   policy = <<EOF
 {
-    "Version": "2012-10-17",
-    "Statement": [
-       {
-          "Effect": "Allow",
-          "Action": [
-              "lambda:InvokeFunction"
-          ],
-          "Resource": "*"
-      },
-      {
+  "Version": "2012-10-17",
+  "Statement": [
+     {
+        "Sid": "AllowCallingOtherLambda",
+        "Effect": "Allow",
         "Action": [
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
+            "lambda:InvokeFunction"
         ],
-        "Resource": "arn:aws:logs:*:*:*",
-        "Effect": "Allow"
-      }
-    ]
+        "Resource": "*"
+    },
+    {
+      "Sid": "TurnOnCloudWatchLogging",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:*:*:*",
+      "Effect": "Allow"
+    },
+    {
+      "Sid": "AllowDynamoDBAccess",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:DeleteItem",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem"
+      ],
+      "Resource": "${aws_dynamodb_table.postboard.arn}"
+    }
+  ]
 }
 EOF
 }
@@ -148,6 +158,19 @@ resource "aws_iam_role_policy" "apigw_auth_invocation_policy" {
 EOF
 }
 
+resource "aws_dynamodb_table" "postboard" {
+  name = "Postboard"
+  billing_mode = "PROVISIONED"
+  read_capacity = 5
+  write_capacity = 5
+  hash_key = "BoardName"
+
+  attribute {
+    name = "BoardName"
+    type = "S"
+  }
+}
+
 resource "aws_lambda_function" "authorizer" {
   role             = aws_iam_role.lambda.arn
   handler          = "auth.authorizer"
@@ -168,16 +191,28 @@ resource "aws_lambda_function" "random_word" {
   runtime          = "python3.6"
   filename         = var.file
   function_name    = "random_word"
-  source_code_hash = filebase64sha256(var.file)
+  source_code_hash = "${filebase64sha256(var.file)}--${aws_iam_role.lambda.arn}"
+
+  environment {
+    variables = {
+      LOG_LEVEL = var.log_level
+    }
+  }
 }
 
-resource "aws_lambda_function" "call_random_word" {
+resource "aws_lambda_function" "post_board" {
   role             = aws_iam_role.lambda.arn
-  handler          = "handlers.call_random_word"
+  handler          = "handlers.post_board"
   runtime          = "python3.6"
   filename         = var.file
-  function_name    = "call_random_word"
-  source_code_hash = filebase64sha256(var.file)
+  function_name    = "post_board"
+  source_code_hash = "${filebase64sha256(var.file)}--${aws_iam_role.lambda.arn}"
+
+  environment {
+    variables = {
+      LOG_LEVEL = var.log_level
+    }
+  }
 }
 
 resource "aws_api_gateway_account" "postboard" {
@@ -198,7 +233,8 @@ resource "aws_api_gateway_authorizer" "token" {
 
 resource "aws_api_gateway_deployment" "test" {
   depends_on = [
-   aws_api_gateway_integration.random_word
+    aws_api_gateway_integration.GET__random_word,
+    aws_api_gateway_integration.POST__board
   ]
 
   rest_api_id = aws_api_gateway_rest_api.postboard.id
@@ -222,7 +258,7 @@ resource "aws_api_gateway_resource" "api" {
   path_part   = "api"
 }
 
-resource "aws_api_gateway_resource" "api_random_word" {
+resource "aws_api_gateway_resource" "api__random_word" {
   rest_api_id = aws_api_gateway_rest_api.postboard.id
   parent_id   = aws_api_gateway_resource.api.id
   path_part   = "random_word"
@@ -230,13 +266,13 @@ resource "aws_api_gateway_resource" "api_random_word" {
 
 resource "aws_api_gateway_method" "GET__random_word" {
   rest_api_id   = aws_api_gateway_rest_api.postboard.id
-  resource_id   = aws_api_gateway_resource.api_random_word.id
+  resource_id   = aws_api_gateway_resource.api__random_word.id
   http_method   = "GET"
   authorization = "CUSTOM"
   authorizer_id = aws_api_gateway_authorizer.token.id
 }
 
-resource "aws_api_gateway_integration" "random_word" {
+resource "aws_api_gateway_integration" "GET__random_word" {
   rest_api_id = aws_api_gateway_rest_api.postboard.id
   resource_id = aws_api_gateway_method.GET__random_word.resource_id
   http_method = aws_api_gateway_method.GET__random_word.http_method
