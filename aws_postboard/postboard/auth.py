@@ -53,7 +53,8 @@ def authorizer(event, context):
     policy.region = tmp[3]
     policy.stage = apiGatewayArnTmp[1]
     # policy.denyAllMethods()
-    policy.allowMethod(HttpVerb.GET, "*")
+    # policy.allowMethod(HttpVerb.GET, "*")
+    policy.allowAllMethods()
 
     # Finally, build the policy
     authResponse = policy.build()

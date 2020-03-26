@@ -57,3 +57,5 @@ https://learn.hashicorp.com/terraform/aws/lambda-api-gateway
 https://www.davidbegin.com/the-most-minimal-aws-lambda-function-with-python-terraform/
 
 https://github.com/awslabs/aws-apigateway-lambda-authorizer-blueprints/blob/master/blueprints/python/api-gateway-authorizer-python.py
+
+https://github.com/terraform-providers/terraform-provider-aws/issues/6352

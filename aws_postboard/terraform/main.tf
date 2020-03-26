@@ -282,30 +282,6 @@ resource "aws_api_gateway_integration" "GET__random_word" {
   uri                     = aws_lambda_function.random_word.invoke_arn
 }
 
-resource "aws_api_gateway_resource" "api_call_random_word" {
-  rest_api_id = aws_api_gateway_rest_api.postboard.id
-  parent_id   = aws_api_gateway_resource.api.id
-  path_part   = "call_random_word"
-}
-
-resource "aws_api_gateway_method" "GET__call_random_word" {
-  rest_api_id   = aws_api_gateway_rest_api.postboard.id
-  resource_id   = aws_api_gateway_resource.api_call_random_word.id
-  http_method   = "GET"
-  authorization = "CUSTOM"
-  authorizer_id = aws_api_gateway_authorizer.token.id
-}
-
-resource "aws_api_gateway_integration" "call_random_word" {
-  rest_api_id = aws_api_gateway_rest_api.postboard.id
-  resource_id = aws_api_gateway_method.GET__call_random_word.resource_id
-  http_method = aws_api_gateway_method.GET__call_random_word.http_method
-
-  integration_http_method = "POST"
-  type                    = "AWS_PROXY"
-  uri                     = aws_lambda_function.call_random_word.invoke_arn
-}
-
 resource "aws_lambda_permission" "apigw_invoke_random_word" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
@@ -317,10 +293,44 @@ resource "aws_lambda_permission" "apigw_invoke_random_word" {
   source_arn = "${aws_api_gateway_rest_api.postboard.execution_arn}/*/*"
 }
 
-resource "aws_lambda_permission" "apigw_invoke_call_random_word" {
+resource "aws_api_gateway_resource" "api__board" {
+  rest_api_id = aws_api_gateway_rest_api.postboard.id
+  parent_id   = aws_api_gateway_resource.api.id
+  path_part   = "board"
+}
+
+resource "aws_api_gateway_resource" "api__board__name" {
+  rest_api_id = aws_api_gateway_rest_api.postboard.id
+  parent_id   = aws_api_gateway_resource.api__board.id
+  path_part   = "{boardName}"
+}
+
+resource "aws_api_gateway_method" "POST__board" {
+  rest_api_id   = aws_api_gateway_rest_api.postboard.id
+  resource_id   = aws_api_gateway_resource.api__board__name.id
+  http_method   = "POST"
+  authorization = "CUSTOM"
+  authorizer_id = aws_api_gateway_authorizer.token.id
+
+  request_parameters = {
+    "method.request.path.boardName" = true
+  }
+}
+
+resource "aws_api_gateway_integration" "POST__board" {
+  rest_api_id = aws_api_gateway_rest_api.postboard.id
+  resource_id = aws_api_gateway_method.POST__board.resource_id
+  http_method = aws_api_gateway_method.POST__board.http_method
+
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.post_board.invoke_arn
+}
+
+resource "aws_lambda_permission" "apigw_invoke_post_board" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.call_random_word.function_name
+  function_name = aws_lambda_function.post_board.function_name
   principal     = "apigateway.amazonaws.com"
 
   # The "/*/*" portion grants access from any method on any resource

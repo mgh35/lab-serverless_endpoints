@@ -21,35 +21,37 @@ def random_word(event, context):
         'isBase64Encoded': False,
         'statusCode': 200,
         'headers': {
-            'Content-Type': 'text/json'
+            'Content-Type': 'text/plain'
         },
         'body': random.choice(words)
     }
 
-def call_random_word(event, context):
-    try:
-        response = json.loads(
+def post_board(event, context):
+    board_name = event['pathParameters']['boardName']
+    message = json.loads(event['body'])
+    logging.info(f'message: {message}')
+    text = message['text']
+    while '@random_word' in text:
+        random_word = json.loads(
             lambda_client.invoke(
                 FunctionName='random_word',
                 InvocationType='RequestResponse'
             )['Payload'].read()
-        )
-    except Exception as e:
-        logging.exception(e)
-        return {
-            'isBase64Encoded': False,
-            'statusCode': 500,
-            'headers': {
-                'Content-Type': 'text/plain'
-            },
-            'body': 'Failed calling random_word'
-        }
+        )['body']
+        text = text.replace('@random_word', random_word, 1)
 
+    postboard.put_item(Item={
+        'BoardName': board_name,
+        'Message': text
+    })
     return {
         'isBase64Encoded': False,
         'statusCode': 200,
         'headers': {
-            'Content-Type': 'text/plain'
+            'Content-Type': 'application/json'
         },
-        'body': response['body']
+        'body': json.dumps({
+            'text': text
+        })
     }
+
