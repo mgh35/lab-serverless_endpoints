@@ -7,6 +7,13 @@ variable "file" {
   default = "../.pkg/v0.0.1.zip"
 }
 
+variable "log_level" {
+  default = "INFO"
+}
+
+variable "api_key" {
+}
+
 resource "aws_iam_role" "cloudwatch" {
   name = "cloudwatch"
 
@@ -147,7 +154,12 @@ resource "aws_lambda_function" "authorizer" {
   runtime          = "python3.6"
   filename         = var.file
   function_name    = "authorizer"
-  source_code_hash = filebase64sha256(var.file)
+  source_code_hash = "${filebase64sha256(var.file)}--${aws_iam_role.lambda.arn}"
+  environment {
+    variables = {
+      API_KEY = var.api_key
+    }
+  }
 }
 
 resource "aws_lambda_function" "random_word" {
@@ -282,4 +294,8 @@ resource "aws_lambda_permission" "apigw_invoke_call_random_word" {
 
 output "base_url" {
   value = aws_api_gateway_deployment.test.invoke_url
+}
+
+output "api_key" {
+  value = var.api_key
 }

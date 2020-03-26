@@ -3,16 +3,14 @@ Copyright 2015-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at
      http://aws.amazon.com/apache2.0/
 or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-"""
-from __future__ import print_function
 
+Modified by mgh35 2020
+"""
 import logging
+import os
 import re
 
-
-tokens = {
-    "secret-token-1": "mark",
-}
+API_KEY = os.environ['API_KEY']
 
 
 def authorizer(event, context):
@@ -26,9 +24,9 @@ def authorizer(event, context):
     """1. Call out to OAuth provider"""
     """2. Decode a JWT token inline"""
     """3. Lookup in a self-managed DB"""
-    principalId = tokens.get(token)
-    if not principalId:
+    if token != API_KEY:
         raise Exception('Unauthorized')
+    principalId = 'api_user'
 
     """you can send a 401 Unauthorized response to the client by failing like so:"""
     """raise Exception('Unauthorized')"""
