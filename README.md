@@ -64,6 +64,8 @@ clouds' setups so I will avoid these extra abstractions.
 
 [Terraform](./findings/Terraform.md)
 
+[AWS](./findings/AWS.md)
+
 
 
 ## References
