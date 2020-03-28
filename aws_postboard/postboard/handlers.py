@@ -26,11 +26,8 @@ def random_word(event, context):
         'body': random.choice(words)
     }
 
-def post_board(event, context):
-    board_name = event['pathParameters']['boardName']
-    message = json.loads(event['body'])
-    logging.info(f'message: {message}')
-    text = message['text']
+
+def resolve_text(text: str) -> str:
     while '@random_word' in text:
         random_word = json.loads(
             lambda_client.invoke(
@@ -40,10 +37,25 @@ def post_board(event, context):
         )['body']
         text = text.replace('@random_word', random_word, 1)
 
-    postboard.put_item(Item={
-        'BoardName': board_name,
-        'Message': text
-    })
+    return text
+
+
+def post_board(event, context):
+    board_name = event['pathParameters']['boardName']
+    message = json.loads(event['body'])
+    logging.info(f'message: {message}')
+    text = resolve_text(message['text'])
+
+    postboard.update_item(
+        Key={
+            'BoardName': board_name,
+        },
+        UpdateExpression="SET Message = list_append(if_not_exists(Message, :empty_list), :text)",
+        ExpressionAttributeValues={
+            ':empty_list': [],
+            ':text': [text],
+        },
+    )
     return {
         'isBase64Encoded': False,
         'statusCode': 200,
@@ -55,3 +67,20 @@ def post_board(event, context):
         })
     }
 
+
+def get_board(event, context):
+    board_name = event['pathParameters']['boardName']
+    result = postboard.get_item(
+        Key={
+            'BoardName': board_name,
+        },
+    )
+    board = result.get('Item', [])
+    return {
+        'isBase64Encoded': False,
+        'statusCode': 200,
+        'headers': {
+            'Content-Type': 'application/json'
+        },
+        'body': json.dumps(board)
+    }
