@@ -6,6 +6,18 @@ JSON-esque language. Having defined a cluster setup, this can be deployed, updat
 happens from the machine it's run without need of a master controller or worker processes.
 
 
+## Initialization
+
+When running in a project, run
+
+```shell script
+terraform init
+```
+
+This sets up the terraform environment and downloads any required plugins. If you are adding things that require new 
+plugins, this will need to be run again.
+
+
 ## Deploy
 
 Specifically, you can run
