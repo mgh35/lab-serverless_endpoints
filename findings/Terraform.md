@@ -123,3 +123,24 @@ Since the 0.12 release, there are additional options with `for` and `for_each`.
 
 To ensure availability through deployment updates, Terraform offers some features. Check out the docs on 
 `create_before_destroy`.
+
+
+
+## Debugging
+
+
+### Logs
+
+Turn the debug level up with:
+
+```shell script
+export TF_LOG=DEBUG
+```
+
+### Taint
+
+You can force a resource to be recreated with 
+
+```shell script
+terraform taint [address]
+```

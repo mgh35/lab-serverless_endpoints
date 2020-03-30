@@ -90,3 +90,52 @@ https://www.davidbegin.com/the-most-minimal-aws-lambda-function-with-python-terr
 https://github.com/awslabs/aws-apigateway-lambda-authorizer-blueprints/blob/master/blueprints/python/api-gateway-authorizer-python.py
 
 https://github.com/terraform-providers/terraform-provider-aws/issues/6352
+
+
+### GCP
+
+
+#### Resources
+
+https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy
+
+https://stackoverflow.com/questions/53284949/create-gcp-and-firebase-project-with-service-account-without-organization-or-fol
+
+#### Cloud Functions
+
+https://cloud.google.com/endpoints/docs/openapi/get-started-cloud-functions
+
+#### Endpoints
+
+https://cloud.google.com/service-infrastructure/docs/overview
+
+https://binx.io/blog/2018/12/01/how-to-expose-your-api-using-google-cloud-endpoints/
+
+https://cloud.google.com/endpoints/docs/openapi/configure-endpoints
+
+https://cloud.google.com/endpoints/docs/grpc/cloud-goog-dns-configure
+
+But not really working:
+
+https://stackoverflow.com/questions/58596309/terraform-cloud-endpoints-on-a-cloud-run-service
+
+https://discuss.hashicorp.com/t/how-to-run-cloud-endpoints-on-cloud-run/3605
+
+https://github.com/terraform-providers/terraform-provider-google/issues/5528
+
+#### Authentication
+
+https://cloud.google.com/endpoints/docs/openapi/authentication-method
+
+https://cloud.google.com/functions/docs/securing/authenticating
+
+#### Terraform
+
+https://cloud.google.com/community/tutorials/managing-gcp-projects-with-terraform
+
+https://cloud.google.com/community/tutorials/getting-started-on-gcp-with-terraform
+
+https://opencredo.com/blogs/google-cloudfunctions-with-terraform/
+
+
+
