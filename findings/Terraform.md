@@ -144,3 +144,20 @@ You can force a resource to be recreated with
 ```shell script
 terraform taint [address]
 ```
+
+### Import
+
+You can import a resource with:
+
+```shell script
+terraform import [resource] [resource_id]
+```
+
+You need to add a dummy resource into your .tf file. The [resource_id] you can get, eg, by listing the objects in the 
+relevant CLI (eg: `az functionapp list`).
+
+You can then remove the resource from your state with:
+
+```shell script
+terraform state rm [resource]
+```

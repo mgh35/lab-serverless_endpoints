@@ -62,9 +62,23 @@ clouds' setups so I will avoid these extra abstractions.
 
 ## Findings
 
+Some specifics of Terraform:
+
 [Terraform](./findings/Terraform.md)
 
+and of the 3 cloud platforms:
+
 [AWS](./findings/AWS.md)
+
+[GCP](./findings/GCP.md)
+
+[Azure](./findings/Azure.md)
+
+A few key themes:
+
+### Learn the resource hierarchy
+
+### API Gateway is key
 
 
 
@@ -95,17 +109,17 @@ https://github.com/terraform-providers/terraform-provider-aws/issues/6352
 ### GCP
 
 
-#### Resources
+##### Resources
 
 https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy
 
 https://stackoverflow.com/questions/53284949/create-gcp-and-firebase-project-with-service-account-without-organization-or-fol
 
-#### Cloud Functions
+##### Cloud Functions
 
 https://cloud.google.com/endpoints/docs/openapi/get-started-cloud-functions
 
-#### Endpoints
+##### Endpoints
 
 https://cloud.google.com/service-infrastructure/docs/overview
 
@@ -123,13 +137,13 @@ https://discuss.hashicorp.com/t/how-to-run-cloud-endpoints-on-cloud-run/3605
 
 https://github.com/terraform-providers/terraform-provider-google/issues/5528
 
-#### Authentication
+##### Authentication
 
 https://cloud.google.com/endpoints/docs/openapi/authentication-method
 
 https://cloud.google.com/functions/docs/securing/authenticating
 
-#### Terraform
+##### Terraform
 
 https://cloud.google.com/community/tutorials/managing-gcp-projects-with-terraform
 
@@ -138,4 +152,44 @@ https://cloud.google.com/community/tutorials/getting-started-on-gcp-with-terrafo
 https://opencredo.com/blogs/google-cloudfunctions-with-terraform/
 
 
+### Azure
 
+##### Resources
+
+https://getnerdio.com/academy/microsoft-azure-fundamentals/
+
+https://docs.microsoft.com/en-us/rest/api/storageservices/create-account-sas
+
+##### Functions
+
+https://docs.microsoft.com/en-us/azure/azure-functions/functions-reference-python
+
+https://docs.microsoft.com/en-us/azure/azure-functions/functions-reference-node
+
+https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local?tabs=macos%2Ccsharp%2Cbash
+
+https://blog.logrocket.com/switching-between-node-versions-during-development/
+
+##### Terraform
+
+https://adrianhall.github.io/typescript/2019/10/23/terraform-functions/
+
+http://vgaltes.com/post/deploying-azure-functions-using-terraform/
+
+https://mikhail.io/lab/terraform/8-functionapp/
+
+##### Endpoints
+
+https://itnext.io/azure-functions-proxy-vs-api-management-or-what-to-choose-for-your-serverless-api-c563b9fd3a0b
+
+https://hackernoon.com/configuring-http-route-parameters-in-azure-functions-2x-using-python-k2k3qxz
+
+##### Logging
+
+https://docs.microsoft.com/en-us/azure/azure-functions/functions-monitoring?tabs=cmd
+
+##### Authentication
+
+https://docs.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
+
+https://markheath.net/post/managing-azure-functions-keys-2
