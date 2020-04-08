@@ -193,3 +193,7 @@ https://docs.microsoft.com/en-us/azure/azure-functions/functions-monitoring?tabs
 https://docs.microsoft.com/en-us/azure/app-service/overview-authentication-authorization
 
 https://markheath.net/post/managing-azure-functions-keys-2
+
+##### Database
+
+https://dev.to/willvelida/provisioning-azure-cosmos-db-resources-with-terraform-4i64

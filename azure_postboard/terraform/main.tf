@@ -5,9 +5,57 @@ provider "azurerm" {
   features {}
 }
 
+variable "cosmosdb_region" {
+  default = "Canada Central"
+}
+
 resource "azurerm_resource_group" "postboard" {
     name = "postboard"
     location = "East US"
+}
+
+resource "random_id" "postboard_db" {
+  byte_length = 4
+  prefix = "postboard-db-"
+  keepers = {
+    # Locks the ID until we change the version
+    version = "3"
+  }
+}
+
+resource "azurerm_cosmosdb_account" "postboard" {
+  name                = random_id.postboard_db.hex
+  location            = var.cosmosdb_region
+  resource_group_name = azurerm_resource_group.postboard.name
+  offer_type          = "Standard"
+  kind                = "MongoDB"
+
+  consistency_policy {
+    consistency_level = "Eventual"
+  }
+
+  geo_location {
+    location          = var.cosmosdb_region
+    failover_priority = 0
+  }
+}
+
+resource "azurerm_cosmosdb_mongo_database" "postboard" {
+  name                = "postboard"
+  resource_group_name = azurerm_cosmosdb_account.postboard.resource_group_name
+  account_name        = azurerm_cosmosdb_account.postboard.name
+  throughput          = 400
+}
+
+resource "azurerm_cosmosdb_mongo_collection" "boards" {
+  name                = "boards"
+  resource_group_name = azurerm_cosmosdb_account.postboard.resource_group_name
+  account_name        = azurerm_cosmosdb_account.postboard.name
+  database_name       = azurerm_cosmosdb_mongo_database.postboard.name
+
+  default_ttl_seconds = 0
+  shard_key           = "boardName"
+  throughput          = 400
 }
 
 resource "random_id" "postboard_source" {
@@ -120,6 +168,9 @@ resource "azurerm_function_app" "functions" {
     FUNCTION_APP_EDIT_MODE = "readonly"
     HASH = data.archive_file.source.output_base64sha256
     WEBSITE_RUN_FROM_PACKAGE = "https://${azurerm_storage_account.postboard.name}.blob.core.windows.net/${azurerm_storage_container.source.name}/${azurerm_storage_blob.source.name}${data.azurerm_storage_account_sas.postboard.sas}"
+
+    MONGODB_NAME = azurerm_cosmosdb_account.postboard.name
+    MONGODB_KEY = azurerm_cosmosdb_account.postboard.primary_master_key
   }
 
   auth_settings {
@@ -133,4 +184,8 @@ output "functionapp_id" {
 
 output "api_host" {
   value = azurerm_function_app.functions.default_hostname
+}
+
+output "cosmodb" {
+  value = azurerm_cosmosdb_account.postboard
 }
