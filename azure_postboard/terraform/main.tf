@@ -175,6 +175,8 @@ resource "azurerm_function_app" "functions" {
 
   auth_settings {
     enabled = false
+    default_provider = "AzureActiveDirectory"
+    unauthenticated_client_action = "AllowAnonymous"
   }
 }
 
@@ -184,8 +186,4 @@ output "functionapp_id" {
 
 output "api_host" {
   value = azurerm_function_app.functions.default_hostname
-}
-
-output "cosmodb" {
-  value = azurerm_cosmosdb_account.postboard
 }
