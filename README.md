@@ -52,7 +52,7 @@ The alternatives seem to lie in two main groups:
 1) Cloud-specific. Each cloud has their own CLI, which allows building a procedural script to provision a cluster. Some 
 provide a declarative layer on to, eg CloudFormation on AWS (with SAM a serverless-specific component on top).
 2) API abstractions. There are a few API frameworks which provide an additional layer of abstraction by allowing the
-user just to define an API and have ther framework decide the appropriate things to provision. The Serverless framework
+user just to define an API and have their framework decide the appropriate things to provision. The Serverless framework
 seems to be the leader here.
 
 While (2) sounds closer to where I'd like to eventually end up, the point of this lab is to explore the different 
@@ -73,12 +73,6 @@ and of the 3 cloud platforms:
 [GCP](./findings/GCP.md)
 
 [Azure](./findings/Azure.md)
-
-A few key themes:
-
-### Learn the resource hierarchy
-
-### API Gateway is key
 
 
 
