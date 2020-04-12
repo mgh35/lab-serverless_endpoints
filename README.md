@@ -74,6 +74,17 @@ and of the 3 cloud platforms:
 
 [Azure](./findings/Azure.md)
 
+The key finding is probably how different each of the implementations is. There is very little sense in which Terraform
+is abstracting away from the underlying providers. 
+
+It's notable, for example, that the Serverless platform does not use Terraform and rather uses each provider's native 
+implementation. For example, whereas Terraform has no answer for GCP ESP, it "just seemed to work" on Serverless from 
+previous experiments. The Serverless approach seems to be to offer an opinionated declarative abstraction, which is 
+constant across providers. It can then apply each providers native implementation. That does mean it's much more 
+limited in what can be expressed. 
+
+The Serverless reference below is probably a good guide for how these can complement each other.
+
 
 
 ## References
@@ -191,3 +202,8 @@ https://markheath.net/post/managing-azure-functions-keys-2
 ##### Database
 
 https://dev.to/willvelida/provisioning-azure-cosmos-db-resources-with-terraform-4i64
+
+
+### Serverless
+
+https://serverless.com/blog/definitive-guide-terraform-serverless/
